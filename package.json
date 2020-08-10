@@ -1,0 +1,38 @@
+{
+  "name": "express-id-log-decorator",
+  "version": "1.0.0",
+  "description": "Express.js Request Unique ID logger decorator",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --verbose --coverage"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/itross/express-id-log-decorator.git"
+  },
+  "keywords": [
+    "express.js",
+    "request",
+    "id",
+    "request-id",
+    "ruid",
+    "logger",
+    "decorator"
+  ],
+  "author": "Luca Stasio <joshuagame@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/itross/express-id-log-decorator/issues"
+  },
+  "homepage": "https://github.com/itross/express-id-log-decorator#readme",
+  "devDependencies": {
+    "@chrisalderson/winston-spy": "^1.0.2",
+    "express": "^4.17.1",
+    "express-http-context": "^1.2.4",
+    "express-ruid": "^1.1.4",
+    "jest": "^26.2.2",
+    "sinon": "^9.0.2",
+    "supertest": "^4.0.2",
+    "winston": "^3.3.3"
+  }
+}
