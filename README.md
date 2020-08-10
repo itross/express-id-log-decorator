@@ -6,15 +6,24 @@ A logger decorator to log request id on each log output.
  
 If the requestId is not present in the request, the log message will remain unchanged.
 
+### Contents
+* [Installation](#installation)
+* [Http context and Request ID](#http-context-and-request-id)
+* [Request ID attribute name](#request-id-attribute-name)
+* [Decorator](#decorator)
+* [Functions](#functions)
+* [Request ID substring format in log line](#request-id-substring-format-in-log-line)
+* [Options](#options)
+
 #### Installation
 ```bash
-npm install express-id-log-generator
+npm install express-id-log-decorator
 ```
 
 #### Http context and Request ID
 You need to initialize and use the _express-http-context_ middleware in your application.
 To generate and add request id for your app, you can use any middleware you want, but you have to set this request id in the http context.
-So, if you want you, you can use directly the [express-ruid](https://www.npmjs.com/package/express-ruid) package which will add the generated request id in the Express req object and in your http context, as in the following example:
+So, if you want, you can use the [express-ruid](https://www.npmjs.com/package/express-ruid) package which will add the generated request id in the Express req object and in your http context for you, as in the following example:
 
 ```js
 const express = require('express');
@@ -50,7 +59,7 @@ idLogDecorator.decorate({ logger: theLogger, attribute: 'requestId' });
 ```
 
 #### Decorator
-To get your id logged into each log line, you can just decorate your logger functions with the express-id-log-decorator.
+To get your id logged into each log line, you can just decorate your logger functions with the _express-id-log-decorator_ ```decorate(options = {})``` function.
 As an example, using Winston logger:
 ```js
 const winston = require('winston');
@@ -78,10 +87,16 @@ By default, the decorator will be applied to the following logger functions:
 
 as specified by the internal array ```defaultFunctions```:
 ```js
-const defaultFunctions = ['log', 'info', 'debug', 'error', 'warn'];
+const defaultFunctions = [
+    'log',
+    'info',
+    'debug',
+    'error',
+    'warn'
+];
 ```
 
-If you want to change the functions to decorate you can configure the _functions_ options when you apply the decoration:
+If you want to change the functions to decorate you can configure the ```functions``` options when you apply the decoration:
 ```js
 const idLogDecorator = require('./logger/log-rid-decorator');
 ...
@@ -91,8 +106,8 @@ const idLogDecorator = require('./logger/log-rid-decorator');
 idLogDecorator.decorate({ logger: theLogger, functions: ['info', 'error'] });
 ```
 
-#### RequestID substring format in log line
-You can specify ho to format the request id sub-string in the log line.
+#### Request ID substring format in log line
+You can specify how to format the request id sub-string in the log line, configuring the ```format``` option with a custom function.
 For example you can specify to print the id using color, or you can specify some prefix and suffix.
 Here are some exaples:
 ```js
@@ -115,7 +130,7 @@ idLogDecorator.decorate({
 });
 ```
 
-The default output is defined by the internal ```defaultFormat()``` function:
+The default output is ````[${rid}]```` as defined by the internal ```defaultFormat()``` function:
 ```js
 function defaultFormat(rid) {
     return `[${rid}]`;
@@ -131,4 +146,4 @@ function defaultFormat(rid) {
 
 ### License
 
-express-ruid is [MIT licensed](LICENSE).
+express-id-log-decorator is [MIT licensed](LICENSE).
