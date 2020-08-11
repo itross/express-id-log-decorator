@@ -1,6 +1,6 @@
 {
   "name": "express-id-log-decorator",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Express.js Request Unique ID logger decorator",
   "main": "index.js",
   "scripts": {
