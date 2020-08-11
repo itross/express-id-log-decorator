@@ -104,11 +104,17 @@ const idLogDecorator = require('./logger/log-rid-decorator');
 ...
 // if you want the request id only in production for 'info' and 'error'
 idLogDecorator.decorate({ logger: theLogger, functions: ['info', 'error'] });
+...
+...
+// if you want the request id only in production for 'info' you can confiure
+// the "functions" option with a string value
+idLogDecorator.decorate({ logger: theLogger, functions: 'info' });
 ```
 
 #### Request ID substring format in log line
 You can specify how to format the request id sub-string in the log line, configuring the ```format``` option with a custom function.
 For example you can specify to print the id using color, or you can specify some prefix and suffix.
+The _format_ option can be configured only with a function accepting one parameter (the request id), otherwhise you get and error.
 Here are some exaples:
 ```js
 const idLogDecorator = require('./logger/log-rid-decorator');

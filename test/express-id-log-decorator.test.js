@@ -10,7 +10,7 @@
  * test/express-id-log-decorator.test.js
  */
 
-const ruidLogDecorator = require('../lib/express-id-log-decorator');
+const idLogDecorator = require('../lib/express-id-log-decorator');
 const supertest = require('supertest');
 const express = require('express');
 const ruid = require('express-ruid');
@@ -19,6 +19,43 @@ require('@chrisalderson/winston-spy');
 const sinon = require('sinon');
 const httpContext = require('express-http-context');
 
+describe('decorate() options', function () {
+    it('should get an error for bad "format" option', function (done) {
+        const logger = winston.createLogger();
+        let passed = false;
+        try {
+            idLogDecorator.decorate({
+                logger,
+                format: 'this-will-generate-a-type-error'
+            });
+            console.log('we expected a type error for "format" options');
+        } catch (err) {
+            passed = true;
+            done();
+        }
+
+        expect(passed).toBe(true);
+
+    });
+
+    it('should get an error for bad "functions" option', function (done) {
+        const logger = winston.createLogger();
+        let passed = false;
+        try {
+            idLogDecorator.decorate({
+                logger,
+                functions: 12
+            });
+            console.log('we expected a type error for "functions" options');
+        } catch (err) {
+            passed = true;
+            done();
+        }
+
+        expect(passed).toBe(true);
+
+    });
+});
 
 describe('request id in log output', function () {
 
@@ -29,7 +66,30 @@ describe('request id in log output', function () {
         const logger = winston.createLogger();
         logger.add(consoleTransport);
         logger.add(spyTransport);
-        ruidLogDecorator.decorate({ logger });
+        idLogDecorator.decorate({ logger });
+        const app = express();
+        app.use(httpContext.middleware);
+        app.use(ruid({ setInContext: true }));
+        app.get('/', function (req, res) {
+            const msg = 'test INFO message';
+            logger.info(msg);
+            expect(spy.calledOnce).toBe(true);
+            const rid = httpContext.get('rid');
+            expect(spy.calledWith({ level: 'info', message: `[${rid}] - ${msg}` })).toBe(true);
+            res.sendStatus(200);
+        });
+
+        supertest(app).get('/').expect(200).end(err => done());
+    });
+
+    it('should have request id only in logger.info output', function (done) {
+        const spy = sinon.spy();
+        const consoleTransport = new winston.transports.Console({ silent: true });
+        const spyTransport = new winston.transports.SpyTransport({ spy, level: 'info' });
+        const logger = winston.createLogger();
+        logger.add(consoleTransport);
+        logger.add(spyTransport);
+        idLogDecorator.decorate({ logger, functions: 'info' });
         const app = express();
         app.use(httpContext.middleware);
         app.use(ruid({ setInContext: true }));
@@ -52,7 +112,7 @@ describe('request id in log output', function () {
         const logger = winston.createLogger();
         logger.add(consoleTransport);
         logger.add(spyTransport);
-        ruidLogDecorator.decorate({ logger });
+        idLogDecorator.decorate({ logger });
         const app = express();
         app.use(httpContext.middleware);
         app.use(ruid({ setInContext: true }));
@@ -83,7 +143,7 @@ describe('log output without request id', function () {
         const logger = winston.createLogger();
         logger.add(consoleTransport);
         logger.add(spyTransport);
-        ruidLogDecorator.decorate({ logger });
+        idLogDecorator.decorate({ logger });
         const app = express();
         app.use(ruid());
         app.get('/', function (req, res) {
@@ -105,7 +165,7 @@ describe('log output without request id', function () {
         const logger = winston.createLogger();
         logger.add(consoleTransport);
         logger.add(spyTransport);
-        ruidLogDecorator.decorate({ logger });
+        idLogDecorator.decorate({ logger });
         const app = express();
         app.use(ruid());
         app.get('/', function (req, res) {
@@ -135,7 +195,7 @@ describe('request id in log output with custom format', function () {
         const logger = winston.createLogger();
         logger.add(consoleTransport);
         logger.add(spyTransport);
-        ruidLogDecorator.decorate({
+        idLogDecorator.decorate({
             logger,
             format: (rid) => {
                 return `request-id: ${rid}`;
@@ -163,9 +223,9 @@ describe('request id in log output with custom format', function () {
         const logger = winston.createLogger();
         logger.add(consoleTransport);
         logger.add(spyTransport);
-        ruidLogDecorator.decorate({
+        idLogDecorator.decorate({
             logger,
-            format: (rid) => {
+            format: function (rid) {
                 return `request-id: ${rid}`;
             }
         });
