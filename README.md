@@ -148,7 +148,7 @@ function defaultFormat(rid) {
 * **logger**: (_object_) the logger object with logging functions to decorated
 * **attribute**: (_string_) to specify the attribute name to search for in the Http Context
 * **format**: (_function_) which accept the requestId and return a formatted string
-* **functions** (_array<string>_) array of name of the functions to decorate
+* **functions** (_array | string_) array of name of the functions to decorate
 
 ### License
 
